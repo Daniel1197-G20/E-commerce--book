@@ -1,0 +1,93 @@
+.book-detail { padding: 2.5rem 0 4rem; }
+.book-detail-grid {
+  display: grid;
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+}
+@media (min-width: 768px) {
+  .book-detail-grid {
+    grid-template-columns: 280px 1fr;
+    gap: 3.5rem;
+  }
+}
+.book-detail-cover img,
+.cover-placeholder {
+  width: 100%;
+  max-width: 280px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  aspect-ratio: 2/3;
+  object-fit: cover;
+}
+.cover-placeholder {
+  background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+  color: #c4a484;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 4rem;
+}
+.category-tag {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+  font-weight: 500;
+}
+.book-detail-info h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  margin: 0.5rem 0 0.35rem;
+  letter-spacing: -0.02em;
+}
+.author { color: var(--color-text-secondary); margin-bottom: 0.5rem; }
+.rating { font-size: 0.9rem; color: var(--color-accent); margin-bottom: 1rem; }
+.price {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.short-desc {
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+  margin-bottom: 1.25rem;
+}
+.book-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+.book-meta span {
+  padding: 0.25rem 0.6rem;
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+}
+.book-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.action-message {
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--color-success);
+}
+.book-description {
+  max-width: 720px;
+  padding-top: 2rem;
+  border-top: 1px solid var(--color-border);
+}
+.book-description h2 {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+.book-description p {
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
