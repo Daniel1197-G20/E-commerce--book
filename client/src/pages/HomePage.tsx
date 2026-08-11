@@ -1,23 +1,46 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { booksApi } from '../services/api';
-import { BookCard } from '../components/books/BookCard';
+import { booksApi, cartApi } from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import { GlassGalleryShowcase } from '../components/gallery/GlassGalleryShowcase';
 import { Button } from '../components/ui/Button';
 import type { Book } from '../types';
 import './HomePage.css';
 
 export function HomePage() {
+  const { isAuthenticated } = useAuth();
   const [featured, setFeatured] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cartItemIds, setCartItemIds] = useState<string[]>([]);
 
   useEffect(() => {
     booksApi
-      .list({ featured: 'true', limit: 4 })
+      .list({ limit: 12 })
       .then((res) => setFeatured(res.data.data.books || []))
       .catch(() => setFeatured([]))
       .finally(() => setLoading(false));
-  }, []);
+
+    if (isAuthenticated) {
+      cartApi
+        .get()
+        .then((res) => {
+          const items = res.data.data.cart?.items || [];
+          setCartItemIds(items.map((i: { bookId: string }) => i.bookId));
+        })
+        .catch(() => setCartItemIds([]));
+    }
+  }, [isAuthenticated]);
+
+  const handleAddToCart = async (book: Book) => {
+    if (cartItemIds.includes(book.id)) return;
+    try {
+      await cartApi.add(book.id);
+      setCartItemIds((prev) => [...prev, book.id]);
+    } catch (err) {
+      console.error('Failed to add book to cart', err);
+    }
+  };
 
   return (
     <main>
@@ -39,7 +62,7 @@ export function HomePage() {
             </p>
             <div className="hero-actions">
               <Link to="/books">
-                <Button variant="primary" size="lg">Explore Books</Button>
+                <Button variant="primary" size="lg">Explore Gallery</Button>
               </Link>
               <Link to="/about">
                 <Button variant="outline" size="lg">Meet the Author</Button>
@@ -49,23 +72,16 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section glass-home-section">
         <div className="container">
-          <div className="section-header">
-            <h2>Featured Books</h2>
-            <Link to="/books" className="section-link">View all →</Link>
-          </div>
-          {loading ? (
-            <p className="muted">Loading books…</p>
-          ) : featured.length === 0 ? (
-            <p className="muted">No featured books yet.</p>
-          ) : (
-            <div className="book-grid">
-              {featured.map((book) => (
-                <BookCard key={book.id} book={book} />
-              ))}
-            </div>
-          )}
+          <GlassGalleryShowcase
+            items={featured}
+            title="Featured Glass Showcase"
+            subtitle="Explore our premier volumes with interactive 3D Cover Flow, Glass Bookshelf & Grid views."
+            onAddToCart={handleAddToCart}
+            cartItemIds={cartItemIds}
+            isLoading={loading}
+          />
         </div>
       </section>
 
