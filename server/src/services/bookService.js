@@ -19,7 +19,7 @@ const getBooks = async (query = {}) => {
     published = 'true',
     sort = 'newest',
     page = 1,
-    limit = 12,
+    limit = 20,
     minPrice,
     maxPrice,
   } = query;
@@ -28,6 +28,8 @@ const getBooks = async (query = {}) => {
 
   if (published === 'true') where.published = true;
   if (published === 'false') where.published = false;
+  // If published === 'all', we don't set where.published filter
+
   if (featured === 'true') where.featured = true;
 
   if (search) {
@@ -86,20 +88,26 @@ const getBooks = async (query = {}) => {
       title: book.title,
       slug: book.slug,
       author: book.author,
+      description: book.description,
       shortDescription: book.shortDescription,
       coverImage: book.coverImage,
+      previewFile: book.previewFile,
+      ebookFile: book.ebookFile,
       price: Number(book.price),
       currency: book.currency,
+      isbn: book.isbn,
       featured: book.featured,
       published: book.published,
       format: book.format,
       pageCount: book.pageCount,
       language: book.language,
+      publicationDate: book.publicationDate,
       categories: book.categories.map((c) => c.category),
       averageRating: Math.round(avgRating * 10) / 10,
       reviewCount: book._count.reviews,
       purchaseCount: book._count.purchases,
       createdAt: book.createdAt,
+      updatedAt: book.updatedAt,
     };
   });
 
@@ -131,7 +139,7 @@ const getBookBySlug = async (slug, userId = null) => {
     },
   });
 
-  if (!book || (!book.published && !userId)) {
+  if (!book) {
     throw new AppError('Book not found', 404, 'BOOK_NOT_FOUND');
   }
 
@@ -156,6 +164,7 @@ const getBookBySlug = async (slug, userId = null) => {
     shortDescription: book.shortDescription,
     coverImage: book.coverImage,
     previewFile: book.previewFile,
+    ebookFile: book.ebookFile,
     price: Number(book.price),
     currency: book.currency,
     isbn: book.isbn,
@@ -178,65 +187,92 @@ const getBookBySlug = async (slug, userId = null) => {
 };
 
 const createBook = async (data) => {
-  const slug = data.slug || slugify(data.title);
+  const { categoryIds, ...bookData } = data;
+  const slug = bookData.slug ? slugify(bookData.slug) : slugify(bookData.title);
+  
   const existing = await prisma.book.findUnique({ where: { slug } });
-  if (existing) throw new AppError('Slug already exists', 409, 'SLUG_EXISTS');
+  if (existing) throw new AppError('Slug or title already exists', 409, 'SLUG_EXISTS');
 
   const book = await prisma.book.create({
     data: {
-      title: data.title,
+      title: bookData.title,
       slug,
-      author: data.author,
-      description: data.description,
-      shortDescription: data.shortDescription,
-      coverImage: data.coverImage,
-      previewFile: data.previewFile,
-      ebookFile: data.ebookFile,
-      price: data.price,
-      currency: data.currency || 'NGN',
-      isbn: data.isbn,
-      publicationDate: data.publicationDate ? new Date(data.publicationDate) : null,
-      pageCount: data.pageCount,
-      language: data.language || 'English',
-      format: data.format || 'PDF',
-      featured: data.featured || false,
-      published: data.published || false,
+      author: bookData.author,
+      description: bookData.description,
+      shortDescription: bookData.shortDescription || null,
+      coverImage: bookData.coverImage || null,
+      previewFile: bookData.previewFile || null,
+      ebookFile: bookData.ebookFile || null,
+      price: new Prisma.Decimal(bookData.price || 0),
+      currency: bookData.currency || 'NGN',
+      isbn: bookData.isbn || null,
+      publicationDate: bookData.publicationDate ? new Date(bookData.publicationDate) : null,
+      pageCount: bookData.pageCount ? parseInt(bookData.pageCount, 10) : null,
+      language: bookData.language || 'English',
+      format: bookData.format || 'PDF',
+      featured: Boolean(bookData.featured),
+      published: Boolean(bookData.published),
     },
   });
 
-  return book;
+  if (categoryIds && Array.isArray(categoryIds) && categoryIds.length > 0) {
+    await prisma.bookCategory.createMany({
+      data: categoryIds.map((catId) => ({ bookId: book.id, categoryId: catId })),
+    });
+  }
+
+  return getBookBySlug(book.slug);
 };
 
 const updateBook = async (id, data) => {
   const book = await prisma.book.findUnique({ where: { id } });
   if (!book) throw new AppError('Book not found', 404, 'BOOK_NOT_FOUND');
 
+  const { categoryIds, ...updateData } = data;
+  const newSlug = updateData.slug ? slugify(updateData.slug) : updateData.title ? slugify(updateData.title) : undefined;
+
+  if (newSlug && newSlug !== book.slug) {
+    const existing = await prisma.book.findUnique({ where: { slug: newSlug } });
+    if (existing) throw new AppError('Slug already in use by another book', 409, 'SLUG_EXISTS');
+  }
+
   const updated = await prisma.book.update({
     where: { id },
     data: {
-      ...(data.title && { title: data.title }),
-      ...(data.slug && { slug: data.slug }),
-      ...(data.author && { author: data.author }),
-      ...(data.description && { description: data.description }),
-      ...(data.shortDescription !== undefined && { shortDescription: data.shortDescription }),
-      ...(data.coverImage !== undefined && { coverImage: data.coverImage }),
-      ...(data.previewFile !== undefined && { previewFile: data.previewFile }),
-      ...(data.ebookFile !== undefined && { ebookFile: data.ebookFile }),
-      ...(data.price !== undefined && { price: data.price }),
-      ...(data.currency && { currency: data.currency }),
-      ...(data.isbn !== undefined && { isbn: data.isbn }),
-      ...(data.publicationDate !== undefined && {
-        publicationDate: data.publicationDate ? new Date(data.publicationDate) : null,
+      ...(updateData.title && { title: updateData.title }),
+      ...(newSlug && { slug: newSlug }),
+      ...(updateData.author && { author: updateData.author }),
+      ...(updateData.description && { description: updateData.description }),
+      ...(updateData.shortDescription !== undefined && { shortDescription: updateData.shortDescription }),
+      ...(updateData.coverImage !== undefined && { coverImage: updateData.coverImage }),
+      ...(updateData.previewFile !== undefined && { previewFile: updateData.previewFile }),
+      ...(updateData.ebookFile !== undefined && { ebookFile: updateData.ebookFile }),
+      ...(updateData.price !== undefined && { price: new Prisma.Decimal(updateData.price) }),
+      ...(updateData.currency && { currency: updateData.currency }),
+      ...(updateData.isbn !== undefined && { isbn: updateData.isbn }),
+      ...(updateData.publicationDate !== undefined && {
+        publicationDate: updateData.publicationDate ? new Date(updateData.publicationDate) : null,
       }),
-      ...(data.pageCount !== undefined && { pageCount: data.pageCount }),
-      ...(data.language && { language: data.language }),
-      ...(data.format && { format: data.format }),
-      ...(data.featured !== undefined && { featured: data.featured }),
-      ...(data.published !== undefined && { published: data.published }),
+      ...(updateData.pageCount !== undefined && {
+        pageCount: updateData.pageCount ? parseInt(updateData.pageCount, 10) : null,
+      }),
+      ...(updateData.language && { language: updateData.language }),
+      ...(updateData.format && { format: updateData.format }),
+      ...(updateData.featured !== undefined && { featured: Boolean(updateData.featured) }),
+      ...(updateData.published !== undefined && { published: Boolean(updateData.published) }),
     },
   });
 
-  return updated;
+  if (categoryIds && Array.isArray(categoryIds)) {
+    await prisma.bookCategory.deleteMany({ where: { bookId: id } });
+    if (categoryIds.length > 0) {
+      await prisma.bookCategory.createMany({
+        data: categoryIds.map((catId) => ({ bookId: id, categoryId: catId })),
+      });
+    }
+  }
+
+  return getBookBySlug(updated.slug);
 };
 
 const deleteBook = async (id) => {

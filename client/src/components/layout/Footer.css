@@ -1,38 +1,192 @@
-.footer {
-  border-top: 1px solid var(--color-border);
+.glass-footer {
   background: var(--color-surface);
-  padding: 3rem 0 2rem;
+  border-top: 1px solid var(--color-border);
+  padding: 4rem 0 2rem;
   margin-top: auto;
+  position: relative;
 }
-.footer-inner {
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+@media (min-width: 768px) {
+  .footer-top {
+    grid-template-columns: 2fr 1fr 1fr 2fr;
+    gap: 2rem;
+  }
+}
+
+.footer-brand {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
-.footer-brand strong { font-size: 1.05rem; }
-.footer-brand p {
-  font-size: 0.875rem;
-  color: var(--color-muted);
-  margin-top: 0.35rem;
+
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text);
 }
-.footer-links {
+
+.footer-logo-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: #ffffff;
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.25rem;
+  align-items: center;
+  justify-content: center;
 }
-.footer-links a {
+
+.footer-bio {
   font-size: 0.9rem;
   color: var(--color-text-secondary);
+  line-height: 1.6;
+  max-width: 320px;
 }
-.footer-links a:hover { color: var(--color-text); }
+
+.footer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  width: fit-content;
+}
+
+.footer-nav-col h4 {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 1.2rem;
+}
+
+.footer-nav-col ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.footer-nav-col a {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.footer-nav-col a:hover {
+  color: var(--color-accent);
+}
+
+.footer-newsletter h4 {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.75rem;
+}
+
+.footer-newsletter p {
+  font-size: 0.88rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.newsletter-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.3rem 0.4rem 0.3rem 0.8rem;
+  transition: border-color var(--transition-fast);
+}
+
+.newsletter-input-wrapper:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.newsletter-input-wrapper .mail-icon {
+  color: var(--color-muted);
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.newsletter-input-wrapper input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  color: var(--color-text);
+  width: 100%;
+}
+
+.newsletter-input-wrapper button {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background var(--transition-fast);
+}
+
+.newsletter-input-wrapper button:hover {
+  background: var(--color-accent-hover);
+}
+
+.footer-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 2rem;
+}
+
+@media (min-width: 640px) {
+  .footer-bottom {
+    flex-direction: row;
+  }
+}
+
 .footer-copy {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--color-muted);
 }
-@media (min-width: 768px) {
-  .footer-inner {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-  }
+
+.footer-legal {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.footer-legal a:hover {
+  color: var(--color-text);
 }

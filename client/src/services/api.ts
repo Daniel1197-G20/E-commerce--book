@@ -48,6 +48,22 @@ export const booksApi = {
   delete: (id: string) => api.delete(`/books/${id}`),
 };
 
+// Admin
+export const adminApi = {
+  getStats: () => api.get('/admin/stats'),
+  getBooks: (params?: Record<string, string | number>) => api.get('/admin/books', { params }),
+  uploadFile: (formData: FormData) =>
+    api.post('/admin/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+};
+
+// Categories
+export const categoriesApi = {
+  list: () => api.get('/categories'),
+  create: (data: { name: string; description?: string }) => api.post('/categories', data),
+};
+
 // Cart
 export const cartApi = {
   get: () => api.get('/cart'),
