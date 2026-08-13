@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const prisma = require('../database/prisma');
 const asyncHandler = require('../utils/asyncHandler');
 const { success } = require('../utils/response');
@@ -75,4 +76,71 @@ exports.getAllBooks = asyncHandler(async (req, res) => {
   const query = { ...req.query, published: req.query.published || 'all' };
   const result = await bookService.getBooks(query);
   success(res, result, 'All books retrieved for admin');
+});
+
+exports.getUsers = asyncHandler(async (req, res) => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      profileImage: true,
+      createdAt: true,
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  success(res, { users }, 'Users list retrieved');
+});
+
+exports.createAdminUser = asyncHandler(async (req, res) => {
+  const { name, email, password } = req.body;
+
+  if (!name || !email || !password) {
+    throw new AppError('Name, email, and password are required', 400);
+  }
+
+  const existing = await prisma.user.findUnique({ where: { email: email.toLowerCase().trim() } });
+  if (existing) {
+    throw new AppError('A user with this email already exists', 409);
+  }
+
+  const passwordHash = await bcrypt.hash(password, 12);
+  const newAdmin = await prisma.user.create({
+    data: {
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      passwordHash,
+      role: 'ADMIN',
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      createdAt: true,
+    },
+  });
+
+  success(res, { user: newAdmin }, 'New admin user created successfully', 201);
+});
+
+exports.toggleUserRole = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+
+  if (!user) {
+    throw new AppError('User not found', 404);
+  }
+
+  // Toggle role between CUSTOMER and ADMIN
+  const newRole = user.role === 'ADMIN' ? 'CUSTOMER' : 'ADMIN';
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: { role: newRole },
+    select: { id: true, name: true, email: true, role: true },
+  });
+
+  success(res, { user: updatedUser }, `User role changed to ${newRole}`);
 });

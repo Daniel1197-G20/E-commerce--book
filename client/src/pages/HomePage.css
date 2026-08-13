@@ -1,6 +1,6 @@
 .hero {
-  padding: 5rem 0 6rem;
-  background: radial-gradient(circle at 50% 0%, var(--color-accent-soft) 0%, var(--color-bg) 70%);
+  padding: 5.5rem 0 6.5rem;
+  background: radial-gradient(circle at 50% 0%, var(--color-accent-soft) 0%, var(--color-bg) 75%);
   position: relative;
   overflow: hidden;
 }
@@ -8,46 +8,48 @@
 .hero::before {
   content: '';
   position: absolute;
-  top: -100px;
+  top: -120px;
   right: -100px;
-  width: 400px;
-  height: 400px;
+  width: 450px;
+  height: 450px;
   border-radius: 50%;
   background: var(--color-accent-soft);
-  filter: blur(80px);
-  opacity: 0.5;
+  filter: blur(90px);
+  opacity: 0.6;
   pointer-events: none;
 }
 
 .hero-inner {
-  max-width: 860px;
+  max-width: 880px;
   text-align: center;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-eyebrow-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.35rem 0.9rem;
+  padding: 0.4rem 1rem;
   border-radius: var(--radius-full);
   background: var(--color-surface);
   border: 1px solid var(--color-accent-border);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: var(--color-accent);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
   box-shadow: var(--shadow-sm);
 }
 
 .hero-title {
   font-family: var(--font-serif);
-  font-size: clamp(2.5rem, 6vw, 4.25rem);
+  font-size: clamp(2.75rem, 6.5vw, 4.5rem);
   font-weight: 600;
   letter-spacing: -0.025em;
-  line-height: 1.12;
+  line-height: 1.08;
   margin-bottom: 1.5rem;
   color: var(--color-text);
 }
@@ -55,7 +57,7 @@
 .hero-subtitle {
   font-size: 1.2rem;
   color: var(--color-text-secondary);
-  max-width: 42rem;
+  max-width: 44rem;
   margin: 0 auto 2.5rem;
   line-height: 1.65;
   font-weight: 400;
@@ -73,10 +75,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2.5rem;
+  gap: 3rem;
   margin-top: 3.5rem;
   padding-top: 2.5rem;
   border-top: 1px solid var(--color-border);
+  flex-wrap: wrap;
 }
 
 .stat-item {
@@ -87,21 +90,27 @@
 
 .stat-value {
   font-family: var(--font-serif);
-  font-size: 1.85rem;
+  font-size: 2rem;
   font-weight: 700;
   color: var(--color-text);
+  letter-spacing: -0.02em;
 }
 
 .stat-label {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: var(--color-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   font-weight: 600;
+  margin-top: 0.2rem;
 }
 
 .section {
-  padding: 5rem 0;
+  padding: 5.5rem 0;
+}
+
+.glass-home-section {
+  position: relative;
 }
 
 .section-alt {
@@ -113,7 +122,7 @@
 .author-feature-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 3rem;
+  gap: 3.5rem;
   align-items: center;
 }
 
@@ -127,58 +136,77 @@
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
-  padding: 2.5rem;
+  padding: 3rem;
   box-shadow: var(--shadow-md);
   position: relative;
 }
 
+.author-card-box::before {
+  content: '“';
+  position: absolute;
+  top: 1rem;
+  left: 1.5rem;
+  font-family: var(--font-serif);
+  font-size: 6rem;
+  line-height: 1;
+  color: var(--color-accent);
+  opacity: 0.15;
+  pointer-events: none;
+}
+
 .author-card-box blockquote {
   font-family: var(--font-serif);
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-style: italic;
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--color-text);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
+  position: relative;
+  z-index: 1;
 }
 
 .author-signature {
   font-weight: 700;
   color: var(--color-accent);
-  font-size: 0.95rem;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
 }
 
 .author-preview-content h2 {
   font-family: var(--font-serif);
-  font-size: 2.25rem;
+  font-size: 2.35rem;
   margin-bottom: 1.25rem;
+  letter-spacing: -0.02em;
 }
 
 .author-preview-content p {
-  font-size: 1.05rem;
+  font-size: 1.075rem;
   color: var(--color-text-secondary);
-  line-height: 1.7;
+  line-height: 1.75;
   margin-bottom: 2rem;
 }
 
 .cta-section {
   text-align: center;
-  padding: 6rem 0;
-  background: radial-gradient(circle at 50% 100%, var(--color-accent-soft) 0%, var(--color-bg) 80%);
+  padding: 6.5rem 0;
+  background: radial-gradient(circle at 50% 100%, var(--color-accent-soft) 0%, var(--color-bg) 85%);
 }
 
 .cta-inner {
-  max-width: 640px;
+  max-width: 660px;
   margin: 0 auto;
 }
 
 .cta-inner h2 {
   font-family: var(--font-serif);
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: 2.65rem;
+  margin-bottom: 1.2rem;
+  letter-spacing: -0.02em;
 }
 
 .cta-inner p {
   font-size: 1.15rem;
   color: var(--color-text-secondary);
-  margin-bottom: 2rem;
+  margin-bottom: 2.25rem;
+  line-height: 1.65;
 }

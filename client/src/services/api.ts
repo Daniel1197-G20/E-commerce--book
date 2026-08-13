@@ -56,6 +56,10 @@ export const adminApi = {
     api.post('/admin/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
+  getUsers: () => api.get('/admin/users'),
+  createAdmin: (data: { name: string; email: string; password: string }) =>
+    api.post('/admin/users', data),
+  toggleUserRole: (userId: string) => api.patch(`/admin/users/${userId}/role`),
 };
 
 // Categories

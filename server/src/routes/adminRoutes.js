@@ -13,4 +13,9 @@ router.get('/stats', adminController.getStats);
 router.get('/books', adminController.getAllBooks);
 router.post('/upload', upload.single('file'), adminController.uploadFile);
 
+// User Management Routes
+router.get('/users', adminController.getUsers);
+router.post('/users', adminController.createAdminUser);
+router.patch('/users/:userId/role', adminController.toggleUserRole);
+
 module.exports = router;
